@@ -1,8 +1,87 @@
-/*
+.wop-section-divider {
+    margin: 16px 0;
+    border: none;
+    border-top: 1px solid var(--background-modifier-border);
+}
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
+.wop-module-tabs {
+    display: flex;
+    gap: 8px;
+    margin: 8px 0 12px;
+}
 
-If your plugin does not need CSS, delete this file.
+.wop-module-tab {
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--background-modifier-border);
+    background: var(--background-primary-alt);
+    cursor: pointer;
+}
 
-*/
+.wop-module-tab.is-active {
+    background: var(--interactive-accent);
+    color: var(--text-on-accent);
+    border-color: var(--interactive-accent);
+}
+
+.wop-module-panel {
+    padding: 4px 0;
+}
+
+.wop-group-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 8px 0 12px;
+}
+
+.wop-group-tab {
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--background-modifier-border);
+    background: var(--background-primary-alt);
+    cursor: pointer;
+}
+
+.wop-group-tab.is-active {
+    background: var(--interactive-accent);
+    color: var(--text-on-accent);
+    border-color: var(--interactive-accent);
+}
+
+.wop-group-panel {
+    padding: 8px 0;
+}
+
+.wop-group-panel .setting-item-control {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-left: 0;
+}
+
+.wop-responsive-input {
+    min-width: 75px;
+    max-width: 120px;
+    font-size: clamp(12px, 1.6vw, 14px);
+}
+
+.wop-responsive-input::placeholder {
+    font-size: clamp(11px, 1.4vw, 13px);
+}
+
+.wop-responsive-textarea {
+    min-width: 50px;
+    max-width: 250px;
+    min-height: 22px;
+    font-size: clamp(12px, 1.6vw, 14px);
+    line-height: 1.3;
+    resize: vertical;
+    white-space: pre-wrap;
+}
+
+.wop-responsive-textarea::placeholder {
+    font-size: clamp(11px, 1.4vw, 13px);
+}

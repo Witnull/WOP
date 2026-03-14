@@ -1,6 +1,8 @@
 import esbuild from "esbuild";
 import process from "process";
 import { builtinModules } from 'node:module';
+import { copyFile, mkdir } from "node:fs/promises";
+import { dirname, join } from "node:path";
 
 const banner =
 `/*
@@ -10,6 +12,20 @@ if you want to view the source, please visit the github repository of this plugi
 `;
 
 const prod = (process.argv[2] === "production");
+
+const buildDir = "D:/ObiVault/.obsidian/plugins/build/";
+const assetsToCopy = ["manifest.json", "styles.css"];
+
+async function copyAssets() {
+	await mkdir(buildDir, { recursive: true });
+	await Promise.all(
+		assetsToCopy.map(async (file) => {
+			const src = file;
+			const dest = join(buildDir, file);
+			await copyFile(src, dest);
+		})
+	);
+}
 
 const context = await esbuild.context({
 	banner: {
@@ -37,13 +53,15 @@ const context = await esbuild.context({
 	logLevel: "info",
 	sourcemap: prod ? false : "inline",
 	treeShaking: true,
-	outfile: "main.js",
+	outfile: buildDir + "main.js",
 	minify: prod,
 });
 
 if (prod) {
 	await context.rebuild();
+	await copyAssets();
 	process.exit(0);
 } else {
 	await context.watch();
+	await copyAssets();
 }
