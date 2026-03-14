@@ -1,5 +1,12 @@
-import { Editor, EditorPosition, EditorSuggest, EditorSuggestTriggerInfo } from "obsidian";
-import MyPlugin from "../main";
+import { App, Editor, EditorPosition, EditorSuggest, EditorSuggestTriggerInfo } from "obsidian";
+import type { SlashModuleSettings } from "./settings";
+
+interface SlashSuggestPluginApi {
+    app: App;
+    settings: {
+        slash: SlashModuleSettings;
+    };
+}
 
 export interface SlashCommandItem {
     id: string;
@@ -10,16 +17,16 @@ export interface SlashCommandItem {
 }
 
 export class SlashCommandSuggest extends EditorSuggest<SlashCommandItem> {
-    plugin: MyPlugin;
+    plugin: SlashSuggestPluginApi;
     private activeGroupId: string | null = null;
 
-    constructor(plugin: MyPlugin) {
+    constructor(plugin: SlashSuggestPluginApi) {
         super(plugin.app);
         this.plugin = plugin;
     }
 
-    onTrigger(cursor: EditorPosition, editor: Editor, _view: any): EditorSuggestTriggerInfo | null {
-        if (!this.plugin.settings.enabled) {
+    onTrigger(cursor: EditorPosition, editor: Editor, _view: unknown): EditorSuggestTriggerInfo | null {
+        if (!this.plugin.settings.slash.enabled) {
             this.activeGroupId = null;
             return null;
         }
@@ -33,7 +40,7 @@ export class SlashCommandSuggest extends EditorSuggest<SlashCommandItem> {
         }
 
         const token = typed.substring(tokenStart);
-        const groups = this.plugin.settings.triggerGroups.filter((group) => group.enabled);
+        const groups = this.plugin.settings.slash.triggerGroups.filter((group) => group.enabled);
         const group = groups.find((entry) => token.startsWith(entry.trigger));
         if (!group) {
             this.activeGroupId = null;
@@ -56,7 +63,7 @@ export class SlashCommandSuggest extends EditorSuggest<SlashCommandItem> {
         }
 
         const query = context.query.trim().toLowerCase();
-        const group = this.plugin.settings.triggerGroups.find((entry) => entry.id === this.activeGroupId);
+        const group = this.plugin.settings.slash.triggerGroups.find((entry) => entry.id === this.activeGroupId);
         if (!group) {
             return [];
         }
@@ -76,7 +83,10 @@ export class SlashCommandSuggest extends EditorSuggest<SlashCommandItem> {
                 }
             }));
 
-        if (!query) return commands;
+        if (!query) {
+            return commands;
+        }
+
         return commands.filter((cmd) =>
             cmd.title.toLowerCase().includes(query) ||
             (cmd.description?.toLowerCase() ?? "").includes(query),
@@ -84,22 +94,26 @@ export class SlashCommandSuggest extends EditorSuggest<SlashCommandItem> {
     }
 
     renderSuggestion(item: SlashCommandItem, el: HTMLElement): void {
+        el.addClass("wop-suggest-item");
         const titleEl = el.createEl("div", { text: item.title });
-        titleEl.addClass("suggestion-title");
+        titleEl.addClass("suggestion-title", "wop-suggest-title");
         if (item.description) {
             const descEl = el.createEl("div", { text: item.description });
-            descEl.addClass("suggestion-description");
+            descEl.addClass("suggestion-description", "wop-suggest-alias");
         }
     }
 
     selectSuggestion(item: SlashCommandItem): void {
         const context = this.context;
-        if (!context) return;
+        if (!context) {
+            return;
+        }
 
         const editor = context.editor;
-        if (!editor) return;
+        if (!editor) {
+            return;
+        }
 
-        // Remove the hotkey trigger and any query text that was typed.
         const from = { line: editor.getCursor().line, ch: context.start.ch };
         const to = { line: editor.getCursor().line, ch: context.end.ch };
         editor.replaceRange("", from, to);
