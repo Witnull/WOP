@@ -1,0 +1,155 @@
+{
+    "hotKey": "/",
+    "commands": {
+        "h1": {
+            "command": "h1",
+            "alias": "heading 1",
+            "value": "# "
+        },
+        "h2": {
+            "command": "h2",
+            "alias": null,
+            "value": "## "
+        },
+        "h3": {
+            "command": "h3",
+            "alias": null,
+            "value": "### "
+        },
+        "h4": {
+            "command": "h4",
+            "alias": null,
+            "value": "#### "
+        },
+        "h5": {
+            "command": "h5",
+            "alias": null,
+            "value": "##### "
+        },
+        "h6": {
+            "command": "h6",
+            "alias": null,
+            "value": "###### "
+        },
+        "bold": {
+            "command": "bold",
+            "alias": null,
+            "value": "____"
+        },
+        "italics": {
+            "command": "italics",
+            "alias": null,
+            "value": "__"
+        },
+        "strike-through": {
+            "command": "strike-through",
+            "alias": null,
+            "value": "~~~~"
+        },
+        "subscript": {
+            "command": "subscript",
+            "alias": null,
+            "value": "<sub></sub>"
+        },
+        "super": {
+            "command": "super",
+            "alias": null,
+            "value": "____"
+        },
+        "underline": {
+            "command": "underline",
+            "alias": null,
+            "value": "<ins></ins>"
+        },
+        "highlight": {
+            "command": "highlight",
+            "alias": null,
+            "value": "===="
+        },
+        "quote": {
+            "command": "quote",
+            "alias": null,
+            "value": "> "
+        },
+        "link": {
+            "command": "link",
+            "alias": null,
+            "value": "[]()"
+        },
+        "image": {
+            "command": "image",
+            "alias": "img",
+            "value": "![]()"
+        },
+        "newline": {
+            "command": "newline",
+            "alias": "br",
+            "value": "<br />"
+        },
+        "bullet-list": {
+            "command": "bullet-list",
+            "alias": "li",
+            "value": "- "
+        },
+        "number-list": {
+            "command": "number-list",
+            "alias": "ol",
+            "value": "1. "
+        },
+        "checkbox": {
+            "command": "checkbox",
+            "alias": "cb",
+            "value": "- [ ] "
+        },
+        "code": {
+            "command": "code",
+            "alias": null,
+            "value": "```"
+        },
+        "info": {
+            "command": "info",
+            "alias": null,
+            "value": ">[!INFO] "
+        },
+        "tip": {
+            "command": "tip",
+            "alias": null,
+            "value": ">[!TIP] "
+        },
+        "important": {
+            "command": "important",
+            "alias": null,
+            "value": ">[!IMPORTANT] "
+        },
+        "warning": {
+            "command": "warning",
+            "alias": null,
+            "value": ">[!WARNING] "
+        },
+        "caution": {
+            "command": "caution",
+            "alias": null,
+            "value": ">[!CAUTION] "
+        },
+        "table": {
+            "command": "table",
+            "alias": "tb",
+            "value": "| | | |\n|---|---|---|\n| | | |\n| | | |"
+        },
+        "note": {
+            "command": "note",
+            "alias": null,
+            "value": ">[!NOTE] >"
+        },
+        "todo": {
+            "command": "todo",
+            "alias": "task",
+            "value": "- [ ] "
+        },
+        "date": {
+            "command": "date",
+            "alias": "today",
+            "value": "{{date}}"
+        }
+    }
+}
