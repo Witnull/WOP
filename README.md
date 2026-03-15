@@ -1,52 +1,89 @@
-# WOP: Multi-trigger slash command suggester for Obsidian
+# WOP for Obsidian
 
-WOP adds configurable command suggestions in the editor based on trigger characters.
+WOP is a writing utility plugin with three editor modules:
 
-You can create one or many trigger groups (for example `/` and `>`), each with its own command list, and enable or disable groups and commands independently.
+- Slash commands: type a trigger like `/` or `>` and insert saved snippets
+- Variable parser: auto-replace typed patterns like `->` with symbols like `→`
+- Template importer: type a trigger like `!` and insert a template file by name
 
 ## Features
 
-- Slash-style suggestion menu while typing in markdown editors
-- Multiple trigger groups (`/`, `>`, or any single character)
-- Per-group enable toggle
-- Per-command enable toggle
-- Add and remove groups and commands from settings
-- Built-in date token replacement: `{{date}}` -> `YYYY-MM-DD`
+### Slash commands
 
-## How it works
+- Multi-trigger groups (for example `/` and `>`), one character per group
+- Enable or disable at module, group, and command level
+- Search suggestions by command key and alias
+- Multiline command values
+- Built-in `{{date}}` token replacement to `YYYY-MM-DD`
+- Per-group JSON import/export
+- Load default commands from bundled `data.json`
 
-Type a trigger character followed by a command key.
+Example:
 
-Examples:
+- `/h1` inserts `# `
+- `/todo` inserts `- [ ] `
+- `>sig` inserts custom signature text
 
-- `/h1` -> inserts `# `
-- `/todo` -> inserts `- [ ] `
-- `>sig` -> inserts your custom signature text
+### Variable parser
 
-Suggestions match both:
+- Replaces configured patterns while typing
+- Rules are sorted by pattern length so more specific rules match first
+- Enable or disable per rule
+- JSON import/export for rule sets
 
-- command key (`command`)
-- alias (`alias`)
+Example defaults include:
+
+- `->` to `→`
+- `=>` to `⇒`
+- `!=` to `≠`
+
+### Template importer
+
+- Trigger-based template suggestions by file name
+- Configurable template folder (default `templates/`)
+- One-character trigger symbol (default `!`)
+- Inserts full template content at cursor after selecting a suggestion
+- Warns in settings when the configured folder does not exist
 
 ## Settings
 
-Open Obsidian settings:
+Open:
 
-- **Settings -> Community plugins -> WOP -> Options**
+- **Settings -> Community plugins -> obsidian-wop -> Options**
 
-You can configure:
+The settings page has module tabs:
 
-- Global enable toggle for all suggestions
-- Trigger groups
-  - Trigger character (first character is used)
-  - Group enable toggle
-  - Delete group
-- Commands inside each group
-  - Command key
-  - Alias (optional)
-  - Inserted value
-  - Enable toggle
-  - Delete command
+- `/ Slash commands`
+- `* Variable parser`
+- `! Templates importer`
+
+## JSON formats
+
+### Slash group import/export
+
+```json
+{
+  "hotKey": "/",
+  "commands": {
+    "h1": {
+      "command": "h1",
+      "alias": "Heading 1",
+      "value": "# "
+    }
+  }
+}
+```
+
+### Variable parser import/export
+
+```json
+{
+  "rules": [
+    { "pattern": "->", "replacement": "→" },
+    { "pattern": "!=", "replacement": "≠" }
+  ]
+}
+```
 
 ## Development
 
@@ -61,13 +98,13 @@ Install dependencies:
 npm install
 ```
 
-Run watch build:
+Watch build:
 
 ```bash
 npm run dev
 ```
 
-Run production build:
+Production build:
 
 ```bash
 npm run build
@@ -88,8 +125,3 @@ Target folder:
 ```
 
 Then reload Obsidian and enable the plugin.
-
-## Notes
-
-- This plugin currently focuses only on command suggestion and insertion behavior.
-- If all trigger groups are removed, defaults are restored on normalization to keep the plugin usable.
