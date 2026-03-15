@@ -252,11 +252,17 @@ export class SlashModuleSettingsRenderer {
             .addText((text) => {
                 text.inputEl.addClass("wop-responsive-input");
                 return text.setPlaceholder("/").setValue(group.trigger).onChange(async (value) => {
+                    if (value.length > 1) {
+                        new Notice("Trigger must be exactly 1 character.");
+                    }
                     const trigger = value.slice(0, 1);
                     if (!trigger) {
                         new Notice("Trigger must contain at least one character.");
                         refresh();
                         return;
+                    }
+                    if (value !== trigger) {
+                        text.setValue(trigger);
                     }
 
                     const isTriggerUsed = this.plugin.settings.slash.triggerGroups.some(

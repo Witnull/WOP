@@ -13,26 +13,36 @@ import {
     VariableParserSettings,
     VariableParserSettingsRenderer,
 } from "./modules/variableParser/settings";
+import {
+    DEFAULT_TEMPLATE_COMMAND_SETTINGS,
+    normalizeTemplateCommandSettings,
+    TemplateCommandSettings,
+    TemplateCommandSettingsRenderer,
+} from "./modules/templateCommand/settings";
 
 const MODULE_SLASH = "slash";
 const MODULE_VARIABLE_PARSER = "variable-parser";
+const MODULE_TEMPLATE_COMMAND = "template-command";
 
-type ModuleId = typeof MODULE_SLASH | typeof MODULE_VARIABLE_PARSER;
+type ModuleId = typeof MODULE_SLASH | typeof MODULE_VARIABLE_PARSER | typeof MODULE_TEMPLATE_COMMAND;
 
 interface LegacySettingsShape {
     enabled?: boolean;
     triggerGroups?: TriggerGroupConfig[];
     variableParser?: Partial<VariableParserSettings>;
+    templateCommand?: Partial<TemplateCommandSettings>;
 }
 
 export interface MyPluginSettings {
     slash: SlashModuleSettings;
     variableParser: VariableParserSettings;
+    templateCommand: TemplateCommandSettings;
 }
 
 export const DEFAULT_SETTINGS: MyPluginSettings = {
     slash: DEFAULT_SLASH_SETTINGS,
     variableParser: DEFAULT_VARIABLE_PARSER_SETTINGS,
+    templateCommand: DEFAULT_TEMPLATE_COMMAND_SETTINGS,
 };
 
 export function normalizeSettings(data: Partial<MyPluginSettings> | LegacySettingsShape | null | undefined): MyPluginSettings {
@@ -47,6 +57,7 @@ export function normalizeSettings(data: Partial<MyPluginSettings> | LegacySettin
     return {
         slash: normalizeSlashSettings(slashData),
         variableParser: normalizeVariableParserSettings(maybeNew?.variableParser ?? legacy?.variableParser),
+        templateCommand: normalizeTemplateCommandSettings(maybeNew?.templateCommand ?? legacy?.templateCommand),
     };
 }
 
@@ -55,12 +66,14 @@ export class WopSettingTab extends PluginSettingTab {
     private activeModuleId: ModuleId = MODULE_SLASH;
     private readonly slashRenderer: SlashModuleSettingsRenderer;
     private readonly variableRenderer: VariableParserSettingsRenderer;
+    private readonly templateRenderer: TemplateCommandSettingsRenderer;
 
     constructor(app: App, plugin: MyPlugin) {
         super(app, plugin);
         this.plugin = plugin;
         this.slashRenderer = new SlashModuleSettingsRenderer(plugin);
         this.variableRenderer = new VariableParserSettingsRenderer(plugin);
+        this.templateRenderer = new TemplateCommandSettingsRenderer(plugin);
     }
 
     display(): void {
@@ -78,11 +91,18 @@ export class WopSettingTab extends PluginSettingTab {
             text: "* Variable parser",
             cls: "wop-module-tab",
         });
+        const templateCommandButton = moduleTabsEl.createEl("button", {
+            text: "! Templates importer",
+            cls: "wop-module-tab",
+        });
         if (this.activeModuleId === MODULE_SLASH) {
             slashModuleButton.addClass("is-active");
         }
         if (this.activeModuleId === MODULE_VARIABLE_PARSER) {
             variableParserButton.addClass("is-active");
+        }
+        if (this.activeModuleId === MODULE_TEMPLATE_COMMAND) {
+            templateCommandButton.addClass("is-active");
         }
 
         slashModuleButton.addEventListener("click", () => {
@@ -95,13 +115,20 @@ export class WopSettingTab extends PluginSettingTab {
             this.display();
         });
 
+        templateCommandButton.addEventListener("click", () => {
+            this.activeModuleId = MODULE_TEMPLATE_COMMAND;
+            this.display();
+        });
+
         containerEl.createEl("hr", { cls: "wop-section-divider" });
 
         const modulePanelEl = containerEl.createDiv({ cls: "wop-module-panel" });
         if (this.activeModuleId === MODULE_SLASH) {
             this.slashRenderer.render(modulePanelEl, () => this.display());
-        } else {
+        } else if (this.activeModuleId === MODULE_VARIABLE_PARSER) {
             this.variableRenderer.render(modulePanelEl, () => this.display());
+        } else {
+            this.templateRenderer.render(modulePanelEl);
         }
     }
 }

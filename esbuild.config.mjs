@@ -13,7 +13,7 @@ if you want to view the source, please visit the github repository of this plugi
 
 const prod = (process.argv[2] === "production");
 
-const buildDir = "./"//"D:/ObiVault/.obsidian/plugins/build/";
+const buildDir = "./" //"D:/ObiVault/.obsidian/plugins/build/";
 const assetsToCopy = ["manifest.json", "styles.css"];
 
 async function copyAssets() {

@@ -2,6 +2,7 @@ import { Plugin } from "obsidian";
 import { MyPluginSettings, WopSettingTab, normalizeSettings } from "./settings";
 import { SlashCommandSuggest } from "./modules/slashCommand/slashCommand";
 import { VariableParserModule } from "./modules/variableParser/variableParser";
+import { TemplateCommandSuggest } from "./modules/templateCommand/templateCommand";
 
 export default class MyPlugin extends Plugin {
 	settings: MyPluginSettings;
@@ -11,6 +12,7 @@ export default class MyPlugin extends Plugin {
 
 		// Register slash command suggestions in markdown editors.
 		this.registerEditorSuggest(new SlashCommandSuggest(this));
+		this.registerEditorSuggest(new TemplateCommandSuggest(this));
 		new VariableParserModule(this).register();
 
 		// Add plugin settings UI for triggers and command lists.
