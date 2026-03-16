@@ -105,8 +105,8 @@ export class TemplateCommandSuggest extends EditorSuggest<TemplateSuggestionItem
     }
 
     private async insertTemplate(editor: Editor, context: EditorSuggestTriggerInfo, file: TFile): Promise<void> {
-        const from = { line: editor.getCursor().line, ch: context.start.ch };
-        const to = { line: editor.getCursor().line, ch: context.end.ch };
+        const from = { line: context.start.line, ch: context.start.ch };
+        const to = { line: context.end.line, ch: context.end.ch };
         editor.replaceRange("", from, to);
         editor.setCursor(from);
 
