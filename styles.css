@@ -152,6 +152,42 @@
     cursor: pointer;
 }
 
+.wop-filetree-panel h3 {
+    margin-top: 16px;
+    margin-bottom: 8px;
+}
+
+.wop-filetree-panel p {
+    margin-top: 0;
+    margin-bottom: 8px;
+    color: var(--text-muted);
+}
+
+.wop-filetree-colored {
+    background: var(--wop-filetree-bg) !important;
+    color: var(--wop-filetree-text) !important;
+    border-radius: 8px;
+}
+
+.wop-filetree-colored:hover {
+    filter: brightness(1.05);
+}
+
+.wop-filetree-swatch {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 1px solid var(--background-modifier-border);
+    margin-right: 8px;
+}
+
+.wop-filetree-color-code {
+    min-width: 78px;
+    font-size: 0.75em;
+    color: var(--text-muted);
+    margin-right: 8px;
+}
+
 .wop-exec {
     margin: 10px 0;
     padding: 10px;
@@ -252,4 +288,16 @@
     margin: 8px 0;
     color: var(--text-muted);
     font-style: italic;
+}
+
+.wop-per-note-encrypt-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: 6px;
+}
+
+.wop-per-note-encrypt-header-actions .clickable-icon,
+.wop-per-note-encrypt-header-actions button {
+    padding: 2px 6px;
 }

@@ -5,6 +5,7 @@ WOP is a writing utility plugin with three editor modules:
 - Slash commands: type a trigger like `/` or `>` and insert saved snippets
 - Variable parser: auto-replace typed patterns like `->` with symbols like `→`
 - Template importer: type a trigger like `!` and insert a template file by name
+- File tree coloring: paint folders and notes in the file explorer with configurable gradients
 
 ## Features
 
@@ -56,6 +57,7 @@ The settings page has module tabs:
 - `/ Slash commands`
 - `* Variable parser`
 - `! Templates importer`
+- `Tree colors`
 
 ## JSON formats
 
@@ -82,6 +84,29 @@ The settings page has module tabs:
     { "pattern": "->", "replacement": "→" },
     { "pattern": "!=", "replacement": "≠" }
   ]
+}
+```
+
+### File tree color import/export
+
+```json
+{
+  "enabled": true,
+  "folder": {
+    "backgroundStart": "#0f766e",
+    "backgroundEnd": "#14b8a6",
+    "textColor": "#f8fafc"
+  },
+  "note": {
+    "backgroundStart": "#1d4ed8",
+    "backgroundEnd": "#38bdf8",
+    "textColor": "#f8fafc"
+  },
+  "subNote": {
+    "backgroundStart": "#1d4ed8",
+    "backgroundEnd": "#38bdf8",
+    "textColors": ["#f8fafc", "#fde68a", "#fecaca", "#bbf7d0"]
+  }
 }
 ```
 

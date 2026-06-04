@@ -1,5 +1,6 @@
 import { App, PluginSettingTab } from "obsidian";
 import type MyPlugin from "./main";
+
 import {
     DEFAULT_SLASH_SETTINGS,
     normalizeSlashSettings,
@@ -31,19 +32,43 @@ import {
     DEFAULT_CODE_EXECUTOR_SETTINGS,
     normalizeCodeExecutorSettings,
 } from "./modules/codeExecutor/settings";
+import {
+    DEFAULT_FILE_TREE_COLOR_SETTINGS,
+    FileTreeColorSettings,
+    FileTreeColorSettingsRenderer,
+    normalizeFileTreeColorSettings,
+} from "./modules/fileTreeColoring/settings";
+// import {
+//     DEFAULT_PER_NOTE_ENCRYPT_SETTINGS,
+//     PerNoteEncryptSettings,
+//     PerNoteEncryptSettingsRenderer,
+//     normalizePerNoteEncryptSettings,
+// } from "./modules/perNoteEncrypt/settings";
+import {
+    autoFolderNoteAndRenameSettings,
+    autoFolderNoteAndRenameSettingsRenderer,
+    DEFAULT_AUTO_FOLDER_RENAME_SETTINGS,
+    normalizeautoFolderNoteAndRenameSettings,
+} from "./modules/autoNoteFolderNRename/settings";
 
 const MODULE_SLASH = "slash";
 const MODULE_VARIABLE_PARSER = "variable-parser";
 const MODULE_TEMPLATE_COMMAND = "template-command";
 const MODULE_MAGIC_WIKILINK = "magic-wikilink";
 const MODULE_CODE_EXECUTOR = "code-executor";
+const MODULE_FILE_TREE_COLORS = "file-tree-colors";
+// const MODULE_PER_NOTE_ENCRYPT = "per-note-encrypt";
+const MODULE_AUTO_FOLDERNOTE_N_RENAME = "folder-note-n-rename"
 
 type ModuleId =
     | typeof MODULE_SLASH
     | typeof MODULE_VARIABLE_PARSER
     | typeof MODULE_TEMPLATE_COMMAND
     | typeof MODULE_MAGIC_WIKILINK
-    | typeof MODULE_CODE_EXECUTOR;
+    | typeof MODULE_CODE_EXECUTOR
+    | typeof MODULE_FILE_TREE_COLORS
+    | typeof MODULE_AUTO_FOLDERNOTE_N_RENAME;
+// | typeof MODULE_PER_NOTE_ENCRYPT;
 
 interface LegacySettingsShape {
     enabled?: boolean;
@@ -52,6 +77,8 @@ interface LegacySettingsShape {
     templateCommand?: Partial<TemplateCommandSettings>;
     magicWikilink?: Partial<MagicWikilinkSettings>;
     codeExecutor?: Partial<CodeExecutorSettings>;
+    fileTreeColoring?: Partial<FileTreeColorSettings>;
+    autoFolderNoteAndRename?: Partial<autoFolderNoteAndRenameSettings>;
 }
 
 export interface MyPluginSettings {
@@ -60,6 +87,9 @@ export interface MyPluginSettings {
     templateCommand: TemplateCommandSettings;
     magicWikilink: MagicWikilinkSettings;
     codeExecutor: CodeExecutorSettings;
+    fileTreeColoring: FileTreeColorSettings;
+    //perNoteEncrypt: PerNoteEncryptSettings;
+    autoFolderNoteAndRename: autoFolderNoteAndRenameSettings;
 }
 
 export const DEFAULT_SETTINGS: MyPluginSettings = {
@@ -68,6 +98,9 @@ export const DEFAULT_SETTINGS: MyPluginSettings = {
     templateCommand: DEFAULT_TEMPLATE_COMMAND_SETTINGS,
     magicWikilink: DEFAULT_MAGIC_WIKILINK_SETTINGS,
     codeExecutor: DEFAULT_CODE_EXECUTOR_SETTINGS,
+    fileTreeColoring: DEFAULT_FILE_TREE_COLOR_SETTINGS,
+    //perNoteEncrypt: DEFAULT_PER_NOTE_ENCRYPT_SETTINGS,
+    autoFolderNoteAndRename: DEFAULT_AUTO_FOLDER_RENAME_SETTINGS,
 };
 
 export function normalizeSettings(data: Partial<MyPluginSettings> | LegacySettingsShape | null | undefined): MyPluginSettings {
@@ -85,6 +118,9 @@ export function normalizeSettings(data: Partial<MyPluginSettings> | LegacySettin
         templateCommand: normalizeTemplateCommandSettings(maybeNew?.templateCommand ?? legacy?.templateCommand),
         magicWikilink: normalizeMagicWikilinkSettings(maybeNew?.magicWikilink ?? legacy?.magicWikilink),
         codeExecutor: normalizeCodeExecutorSettings(maybeNew?.codeExecutor ?? legacy?.codeExecutor),
+        fileTreeColoring: normalizeFileTreeColorSettings(maybeNew?.fileTreeColoring ?? legacy?.fileTreeColoring),
+        //perNoteEncrypt: normalizePerNoteEncryptSettings(maybeNew?.perNoteEncrypt ?? undefined),
+        autoFolderNoteAndRename: normalizeautoFolderNoteAndRenameSettings(maybeNew?.autoFolderNoteAndRename ?? undefined)
     };
 }
 
@@ -96,6 +132,9 @@ export class WopSettingTab extends PluginSettingTab {
     private readonly templateRenderer: TemplateCommandSettingsRenderer;
     private readonly magicWikilinkRenderer: MagicWikilinkSettingsRenderer;
     private readonly codeExecutorRenderer: CodeExecutorSettingsRenderer;
+    private readonly fileTreeColorRenderer: FileTreeColorSettingsRenderer;
+    //private readonly perNoteEncryptRenderer: PerNoteEncryptSettingsRenderer;
+    private readonly autoFolderNoteAndRenameSettingsRenderer: autoFolderNoteAndRenameSettingsRenderer;
 
     constructor(app: App, plugin: MyPlugin) {
         super(app, plugin);
@@ -105,6 +144,9 @@ export class WopSettingTab extends PluginSettingTab {
         this.templateRenderer = new TemplateCommandSettingsRenderer(plugin);
         this.magicWikilinkRenderer = new MagicWikilinkSettingsRenderer(plugin);
         this.codeExecutorRenderer = new CodeExecutorSettingsRenderer(plugin);
+        this.fileTreeColorRenderer = new FileTreeColorSettingsRenderer(plugin);
+        //this.perNoteEncryptRenderer = new PerNoteEncryptSettingsRenderer(plugin);
+        this.autoFolderNoteAndRenameSettingsRenderer = new autoFolderNoteAndRenameSettingsRenderer(plugin);
     }
 
     display(): void {
@@ -134,6 +176,18 @@ export class WopSettingTab extends PluginSettingTab {
             text: "[<> Code executor",
             cls: "wop-module-tab",
         });
+        const fileTreeColorButton = moduleTabsEl.createEl("button", {
+            text: "Tree colors",
+            cls: "wop-module-tab",
+        });
+        // const perNoteEncryptButton = moduleTabsEl.createEl("button", {
+        //     text: "Per-note encrypt",
+        //     cls: "wop-module-tab",
+        // });
+        const autoFolderNoteAndRenameSettingsButton = moduleTabsEl.createEl("button", {
+            text: "Auto Folder Note",
+            cls: "wop-module-tab"
+        })
 
         if (this.activeModuleId === MODULE_SLASH) {
             slashModuleButton.addClass("is-active");
@@ -149,6 +203,15 @@ export class WopSettingTab extends PluginSettingTab {
         }
         if (this.activeModuleId === MODULE_CODE_EXECUTOR) {
             codeExecutorButton.addClass("is-active");
+        }
+        if (this.activeModuleId === MODULE_FILE_TREE_COLORS) {
+            fileTreeColorButton.addClass("is-active");
+        }
+        // if (this.activeModuleId === MODULE_PER_NOTE_ENCRYPT) {
+        //     perNoteEncryptButton.addClass("is-active");
+        // }
+        if (this.activeModuleId == MODULE_AUTO_FOLDERNOTE_N_RENAME) {
+            autoFolderNoteAndRenameSettingsButton.addClass("is-active");
         }
 
         slashModuleButton.addEventListener("click", () => {
@@ -176,6 +239,21 @@ export class WopSettingTab extends PluginSettingTab {
             this.display();
         });
 
+        fileTreeColorButton.addEventListener("click", () => {
+            this.activeModuleId = MODULE_FILE_TREE_COLORS;
+            this.display();
+        });
+
+        // perNoteEncryptButton.addEventListener("click", () => {
+        //     this.activeModuleId = MODULE_PER_NOTE_ENCRYPT;
+        //     this.display();
+        // });
+
+        autoFolderNoteAndRenameSettingsButton.addEventListener("click", () => {
+            this.activeModuleId = MODULE_AUTO_FOLDERNOTE_N_RENAME;
+            this.display();
+        })
+
         window.requestAnimationFrame(() => {
             const activeTab = moduleTabsEl.querySelector<HTMLButtonElement>(".wop-module-tab.is-active");
             activeTab?.scrollIntoView({ block: "nearest", inline: "center" });
@@ -195,6 +273,15 @@ export class WopSettingTab extends PluginSettingTab {
             this.magicWikilinkRenderer.render(modulePanelEl);
         } else if (this.activeModuleId === MODULE_CODE_EXECUTOR) {
             this.codeExecutorRenderer.render(modulePanelEl);
+        } else if (this.activeModuleId === MODULE_FILE_TREE_COLORS) {
+            this.fileTreeColorRenderer.render(modulePanelEl);
+        }
+        // } else if (this.activeModuleId === MODULE_PER_NOTE_ENCRYPT) {
+        //     this.perNoteEncryptRenderer.render(modulePanelEl);
+        // }
+        else if (this.activeModuleId == MODULE_AUTO_FOLDERNOTE_N_RENAME) {
+            // this.SettingsRenderer.render(modulePanelEl);
+            this.autoFolderNoteAndRenameSettingsRenderer.render(modulePanelEl, () => this.display());
         }
     }
 }
