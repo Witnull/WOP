@@ -5,17 +5,14 @@ import {
     DEFAULT_SLASH_SETTINGS,
     SlashModuleSettings,
     SlashModuleSettingsRenderer,
-    TriggerGroupConfig,
 } from "./modules/slashCommand/settings";
 import {
     DEFAULT_VARIABLE_PARSER_SETTINGS,
-    normalizeVariableParserSettings,
     VariableParserSettings,
     VariableParserSettingsRenderer,
 } from "./modules/variableParser/settings";
 import {
     DEFAULT_TEMPLATE_COMMAND_SETTINGS,
-    normalizeTemplateCommandSettings,
     TemplateCommandSettings,
     TemplateCommandSettingsRenderer,
 } from "./modules/templateCommand/settings";
@@ -23,19 +20,16 @@ import {
     DEFAULT_MAGIC_WIKILINK_SETTINGS,
     MagicWikilinkSettings,
     MagicWikilinkSettingsRenderer,
-    normalizeMagicWikilinkSettings,
 } from "./modules/magicWikilink/settings";
 import {
     CodeExecutorSettings,
     CodeExecutorSettingsRenderer,
     DEFAULT_CODE_EXECUTOR_SETTINGS,
-    normalizeCodeExecutorSettings,
 } from "./modules/codeExecutor/settings";
 import {
     DEFAULT_FILE_TREE_COLOR_SETTINGS,
     FileTreeColorSettings,
     FileTreeColorSettingsRenderer,
-    normalizeFileTreeColorSettings,
 } from "./modules/fileTreeColoring/settings";
 // import {
 //     DEFAULT_PER_NOTE_ENCRYPT_SETTINGS,
@@ -47,7 +41,6 @@ import {
     autoFolderNoteAndRenameSettings,
     autoFolderNoteAndRenameSettingsRenderer,
     DEFAULT_AUTO_FOLDER_RENAME_SETTINGS,
-    normalizeautoFolderNoteAndRenameSettings,
 } from "./modules/autoNoteFolderNRename/settings";
 
 const MODULE_SLASH = "slash";

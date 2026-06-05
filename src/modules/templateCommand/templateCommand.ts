@@ -28,13 +28,13 @@ function getDisplayName(file: TFile): string {
     return fileName.slice(0, Math.max(0, fileName.length - ext.length - 1));
 }
 
-function normalizeTemplateFolder(folder: string): string {
-    const cleaned = normalizePath((folder || "templates/").trim());
-    if (cleaned.length === 0) {
-        return "templates/";
-    }
-    return cleaned.endsWith("/") ? cleaned : `${cleaned}/`;
-}
+// function normalizeTemplateFolder(folder: string): string {
+//     const cleaned = normalizePath((folder || "templates/").trim());
+//     if (cleaned.length === 0) {
+//         return "templates/";
+//     }
+//     return cleaned.endsWith("/") ? cleaned : `${cleaned}/`;
+// }
 
 export class TemplateCommandSuggest extends EditorSuggest<TemplateSuggestionItem> {
     private plugin: TemplatePluginApi;
@@ -75,7 +75,7 @@ export class TemplateCommandSuggest extends EditorSuggest<TemplateSuggestionItem
 
     async getSuggestions(context: EditorSuggestTriggerInfo): Promise<TemplateSuggestionItem[]> {
         const query = context.query.trim().toLowerCase();
-        const folderPrefix = normalizeTemplateFolder(this.plugin.settings.templateCommand.templateFolder);
+        const folderPrefix = this.plugin.settings.templateCommand.templateFolder;
         const files = this.plugin.app.vault
             .getFiles()
             .filter((file) => file.path.startsWith(folderPrefix));
