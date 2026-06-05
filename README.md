@@ -12,8 +12,9 @@ WOP is a writing utility plugin that pack multiple essentials plugin that i thin
 - **Auto Note Folder and Rename Image** : When image pasted/drag-n-drop, the current note will convert to Folder Note then rename the pasted image.
 
 ## Features
-
-![Demo](https://github.com/user-attachments/assets/11f75496-a6d7-4508-b200-3bfdf293561d)
+<p align="center">
+<video src="https://github.com/user-attachments/assets/11f75496-a6d7-4508-b200-3bfdf293561d" width="640" height="480" controls></video>
+</p>
 
 ### Slash commands
 
