@@ -109,53 +109,55 @@ export const DEFAULT_SLASH_SETTINGS: SlashModuleSettings = {
     ]
 };
 
-export function normalizeSlashSettings(data: Partial<SlashModuleSettings> | null | undefined): SlashModuleSettings {
-    const sourceGroups = data?.triggerGroups ?? DEFAULT_SLASH_SETTINGS.triggerGroups;
-    const merged: SlashModuleSettings = {
-        enabled: data?.enabled ?? DEFAULT_SLASH_SETTINGS.enabled,
-        triggerGroups: sourceGroups.map((group, groupIndex) => ({
-            id: group.id || `group-${groupIndex + 1}`,
-            trigger: (group.trigger ?? "/").slice(0, 1) || "/",
-            enabled: group.enabled ?? true,
-            commands: (group.commands ?? []).map((command, commandIndex) => ({
-                id: command.id || `cmd-${groupIndex + 1}-${commandIndex + 1}`,
-                command: command.command || "",
-                alias: command.alias || "",
-                value: command.value || "",
-                enabled: command.enabled ?? true
-            }))
-        }))
-    };
+// export function normalizeSlashSettings(data: Partial<SlashModuleSettings> | null | undefined): SlashModuleSettings {
+//     const sourceGroups = data?.triggerGroups ?? DEFAULT_SLASH_SETTINGS.triggerGroups;
+//     const merged: SlashModuleSettings = {
+//         enabled: data?.enabled ?? DEFAULT_SLASH_SETTINGS.enabled,
+//         triggerGroups: sourceGroups.map((group, groupIndex) => ({
+//             id: group.id || `group-${groupIndex + 1}`,
+//             trigger: (group.trigger ?? "/").slice(0, 1) || "/",
+//             enabled: group.enabled ?? true,
+//             commands: (group.commands ?? []).map((command, commandIndex) => ({
+//                 id: command.id || `cmd-${groupIndex + 1}-${commandIndex + 1}`,
+//                 command: command.command || "",
+//                 alias: command.alias || "",
+//                 value: command.value || "",
+//                 enabled: command.enabled ?? true
+//             }))
+//         }))
+//     };
 
-    if (merged.triggerGroups.length === 0) {
-        merged.triggerGroups = DEFAULT_SLASH_SETTINGS.triggerGroups.map((group) => ({
-            ...group,
-            commands: group.commands.map((command) => ({ ...command }))
-        }));
-    }
+//     if (merged.triggerGroups.length === 0) {
+//         merged.triggerGroups = DEFAULT_SLASH_SETTINGS.triggerGroups.map((group) => ({
+//             ...group,
+//             commands: group.commands.map((command) => ({ ...command }))
+//         }));
+//     }
 
-    const defaultTrigger = seed.hotKey?.slice(0, 1) || "/";
-    const targetGroup =
-        merged.triggerGroups.find((group) => group.trigger === defaultTrigger) ?? merged.triggerGroups[0];
-    if (targetGroup && targetGroup.commands.length === 0) {
-        targetGroup.commands = buildDefaultSlashCommands(seed);
-    }
+//     const defaultTrigger = seed.hotKey?.slice(0, 1) || "/";
+//     const targetGroup =
+//         merged.triggerGroups.find((group) => group.trigger === defaultTrigger) ?? merged.triggerGroups[0];
+//     if (targetGroup && targetGroup.commands.length === 0) {
+//         targetGroup.commands = buildDefaultSlashCommands(seed);
+//     }
 
-    const groupIds = makeUniqueIds(merged.triggerGroups.map((group) => group.id), "group");
-    merged.triggerGroups.forEach((group, groupIndex) => {
-        group.id = groupIds[groupIndex] ?? `group-${groupIndex + 1}`;
-        const commandIds = makeUniqueIds(group.commands.map((command) => command.id), `${group.id}-cmd`);
-        group.commands.forEach((command, commandIndex) => {
-            command.id = commandIds[commandIndex] ?? `${group.id}-cmd-${commandIndex + 1}`;
-        });
-    });
+//     const groupIds = makeUniqueIds(merged.triggerGroups.map((group) => group.id), "group");
+//     merged.triggerGroups.forEach((group, groupIndex) => {
+//         group.id = groupIds[groupIndex] ?? `group-${groupIndex + 1}`;
+//         const commandIds = makeUniqueIds(group.commands.map((command) => command.id), `${group.id}-cmd`);
+//         group.commands.forEach((command, commandIndex) => {
+//             command.id = commandIds[commandIndex] ?? `${group.id}-cmd-${commandIndex + 1}`;
+//         });
+//     });
 
-    return merged;
-}
+//     return merged;
+// }
 
 export class SlashModuleSettingsRenderer {
     private plugin: SlashSettingsPluginApi;
     private activeGroupId: string | null = null;
+
+    private selectedCommandIds = new Set<string>();
 
     constructor(plugin: SlashSettingsPluginApi) {
         this.plugin = plugin;
@@ -171,9 +173,6 @@ export class SlashModuleSettingsRenderer {
                     await this.plugin.saveSettings();
                 }),
             );
-
-        containerEl.createEl("hr", { cls: "wop-section-divider" });
-        containerEl.createEl("h3", { text: "Trigger groups" });
 
         new Setting(containerEl)
             .setName("Add trigger group")
@@ -196,7 +195,7 @@ export class SlashModuleSettingsRenderer {
                             }
                         ]
                     });
-                    this.plugin.settings.slash = normalizeSlashSettings(this.plugin.settings.slash);
+                    //this.plugin.settings.slash = normalizeSlashSettings(this.plugin.settings.slash);
                     this.activeGroupId = nextId;
                     await this.plugin.saveSettings();
                     refresh();
@@ -244,7 +243,6 @@ export class SlashModuleSettingsRenderer {
 
         const groupIndex = this.plugin.settings.slash.triggerGroups.findIndex((entry) => entry.id === groupId);
         const panelEl = containerEl.createDiv({ cls: "wop-group-panel" });
-        panelEl.createEl("h4", { text: `Group ${groupIndex + 1}: ${group.trigger}` });
 
         new Setting(panelEl)
             .setName("Trigger")
@@ -275,7 +273,7 @@ export class SlashModuleSettingsRenderer {
                     }
 
                     group.trigger = trigger;
-                    this.plugin.settings.slash = normalizeSlashSettings(this.plugin.settings.slash);
+                    //this.plugin.settings.slash = normalizeSlashSettings(this.plugin.settings.slash);
                     await this.plugin.saveSettings();
                     refresh();
                 });
@@ -294,15 +292,15 @@ export class SlashModuleSettingsRenderer {
                     this.plugin.settings.slash.triggerGroups = this.plugin.settings.slash.triggerGroups.filter(
                         (entry) => entry.id !== group.id,
                     );
-                    this.plugin.settings.slash = normalizeSlashSettings(this.plugin.settings.slash);
+                    //this.plugin.settings.slash = normalizeSlashSettings(this.plugin.settings.slash);
                     this.activeGroupId = this.plugin.settings.slash.triggerGroups[0]?.id ?? null;
                     await this.plugin.saveSettings();
                     refresh();
                 }),
             );
 
-        panelEl.createEl("hr", { cls: "wop-section-divider" });
 
+        panelEl.createEl("hr", { cls: "wop-section-divider" });
         new Setting(panelEl)
             .setName("Commands")
             .setDesc("Manage commands in this trigger group.")
@@ -316,14 +314,142 @@ export class SlashModuleSettingsRenderer {
                         value: "",
                         enabled: true
                     });
-                    this.plugin.settings.slash = normalizeSlashSettings(this.plugin.settings.slash);
+                    //this.plugin.settings.slash = normalizeSlashSettings(this.plugin.settings.slash);
                     await this.plugin.saveSettings();
                     refresh();
                 }),
             );
+        const selectedCount = group.commands.filter(
+            c => this.selectedCommandIds.has(c.id),
+        ).length;
+
+        if (selectedCount > 0) {
+            new Setting(panelEl)
+                .setName(`${selectedCount} command(s) selected`)
+                .addButton((button) =>
+                    button
+                        .setButtonText("Clear")
+                        .onClick(() => {
+                            this.selectedCommandIds.clear();
+                            refresh();
+                        }),
+                )
+                .addButton((button) =>
+                    button
+                        .setButtonText("Delete Selected")
+                        .setWarning()
+                        .onClick(async () => {
+                            const confirmed = window.confirm(
+                                `Delete ${selectedCount} command(s)?`,
+                            );
+
+                            if (!confirmed) {
+                                return;
+                            }
+
+                            group.commands =
+                                group.commands.filter(
+                                    c =>
+                                        !this.selectedCommandIds.has(
+                                            c.id,
+                                        ),
+                                );
+
+                            this.selectedCommandIds.clear();
+
+                            await this.plugin.saveSettings();
+                            refresh();
+                        }),
+                )
+                .addDropdown((dropdown) => {
+                    dropdown.addOption("", "Move selected to...");
+
+                    this.plugin.settings.slash.triggerGroups
+                        .filter(g => g.id !== group.id)
+                        .forEach(g => {
+                            dropdown.addOption(
+                                g.id,
+                                `${g.trigger} group`,
+                            );
+                        });
+
+                    dropdown.onChange(async (targetId) => {
+                        if (!targetId) {
+                            return;
+                        }
+
+                        const targetGroup =
+                            this.plugin.settings.slash.triggerGroups.find(
+                                g => g.id === targetId,
+                            );
+
+                        if (!targetGroup) {
+                            return;
+                        }
+
+                        const commandsToMove =
+                            group.commands.filter(
+                                c =>
+                                    this.selectedCommandIds.has(
+                                        c.id,
+                                    ),
+                            );
+
+                        group.commands =
+                            group.commands.filter(
+                                c =>
+                                    !this.selectedCommandIds.has(
+                                        c.id,
+                                    ),
+                            );
+
+                        for (const cmd of commandsToMove) {
+                            targetGroup.commands.push({
+                                ...cmd,
+                                id: `${targetGroup.id}-cmd-${targetGroup.commands.length + 1}`,
+                            });
+                        }
+
+                        this.selectedCommandIds.clear();
+
+                        await this.plugin.saveSettings();
+                        refresh();
+
+                        new Notice(
+                            `Moved ${commandsToMove.length} command(s).`,
+                        );
+                    });
+                });
+        }
+        panelEl.createEl("hr", { cls: "wop-section-divider" });
 
         group.commands.forEach((command) => {
+            // Capture the current command in a local constant that won't change
+            const currentCommand = command;
+
             new Setting(panelEl)
+                .addToggle((toggle) =>
+                    toggle
+                        .setValue(
+                            this.selectedCommandIds.has(
+                                command.id,
+                            ),
+                        )
+                        .setTooltip("Select")
+                        .onChange((value) => {
+                            if (value) {
+                                this.selectedCommandIds.add(
+                                    command.id,
+                                );
+                            } else {
+                                this.selectedCommandIds.delete(
+                                    command.id,
+                                );
+                            }
+
+                            refresh();
+                        }),
+                )
                 .addToggle((toggle) =>
                     toggle.setValue(command.enabled).setTooltip("Enable command").onChange(async (value) => {
                         command.enabled = value;
@@ -358,11 +484,49 @@ export class SlashModuleSettingsRenderer {
                 .addExtraButton((button) =>
                     button.setIcon("trash").setTooltip("Delete command").onClick(async () => {
                         group.commands = group.commands.filter((entry) => entry.id !== command.id);
-                        this.plugin.settings.slash = normalizeSlashSettings(this.plugin.settings.slash);
+                        //this.plugin.settings.slash = normalizeSlashSettings(this.plugin.settings.slash);
                         await this.plugin.saveSettings();
                         refresh();
-                    }),
-                );
+                    }))
+                .addDropdown((dropdown) => {
+                    dropdown.addOption("", "Move to...");
+
+                    this.plugin.settings.slash.triggerGroups
+                        .filter(g => g.id !== group.id)
+                        .forEach(g => {
+                            dropdown.addOption(
+                                g.id,
+                                `${g.trigger} group`
+                            );
+                        });
+
+                    dropdown.onChange(async (targetId) => {
+                        if (!targetId) {
+                            return;
+                        }
+
+                        const targetGroup =
+                            this.plugin.settings.slash.triggerGroups.find(
+                                g => g.id === targetId
+                            );
+
+                        if (!targetGroup) {
+                            return;
+                        }
+
+                        group.commands = group.commands.filter(
+                            c => c.id !== currentCommand.id
+                        );
+
+                        targetGroup.commands.push({
+                            ...currentCommand,
+                            id: `${targetGroup.id}-cmd-${targetGroup.commands.length + 1}`
+                        });
+
+                        await this.plugin.saveSettings();
+                        refresh();
+                    });
+                })
         });
 
         new Setting(panelEl)
@@ -371,7 +535,7 @@ export class SlashModuleSettingsRenderer {
             .addButton((button) =>
                 button.setButtonText("Load default commands").onClick(async () => {
                     group.commands = buildDefaultSlashCommands(seed);
-                    this.plugin.settings.slash = normalizeSlashSettings(this.plugin.settings.slash);
+                    //this.plugin.settings.slash = normalizeSlashSettings(this.plugin.settings.slash);
                     await this.plugin.saveSettings();
                     refresh();
                 }),
@@ -449,7 +613,7 @@ export class SlashModuleSettingsRenderer {
                     }
                 }
 
-                this.plugin.settings.slash = normalizeSlashSettings(this.plugin.settings.slash);
+                //this.plugin.settings.slash = normalizeSlashSettings(this.plugin.settings.slash);
                 await this.plugin.saveSettings();
                 refresh();
                 new Notice("Imported data.json into this group.");

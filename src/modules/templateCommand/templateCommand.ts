@@ -6,6 +6,10 @@ interface TemplatePluginApi {
     settings: {
         templateCommand: TemplateCommandSettings;
     };
+    registerEditorSuggest(
+        suggest: EditorSuggest<any>,
+    ): void;
+
 }
 
 interface TemplateSuggestionItem {
@@ -39,6 +43,10 @@ export class TemplateCommandSuggest extends EditorSuggest<TemplateSuggestionItem
         super(plugin.app);
         this.plugin = plugin;
     }
+    register(): void {
+        this.plugin.registerEditorSuggest(this);
+    }
+
 
     onTrigger(cursor: EditorPosition, editor: Editor, _view: unknown): EditorSuggestTriggerInfo | null {
         if (!this.plugin.settings.templateCommand.enabled) {

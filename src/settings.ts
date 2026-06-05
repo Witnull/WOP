@@ -3,7 +3,6 @@ import type MyPlugin from "./main";
 
 import {
     DEFAULT_SLASH_SETTINGS,
-    normalizeSlashSettings,
     SlashModuleSettings,
     SlashModuleSettingsRenderer,
     TriggerGroupConfig,
@@ -70,16 +69,6 @@ type ModuleId =
     | typeof MODULE_AUTO_FOLDERNOTE_N_RENAME;
 // | typeof MODULE_PER_NOTE_ENCRYPT;
 
-interface LegacySettingsShape {
-    enabled?: boolean;
-    triggerGroups?: TriggerGroupConfig[];
-    variableParser?: Partial<VariableParserSettings>;
-    templateCommand?: Partial<TemplateCommandSettings>;
-    magicWikilink?: Partial<MagicWikilinkSettings>;
-    codeExecutor?: Partial<CodeExecutorSettings>;
-    fileTreeColoring?: Partial<FileTreeColorSettings>;
-    autoFolderNoteAndRename?: Partial<autoFolderNoteAndRenameSettings>;
-}
 
 export interface MyPluginSettings {
     slash: SlashModuleSettings;
@@ -103,26 +92,6 @@ export const DEFAULT_SETTINGS: MyPluginSettings = {
     autoFolderNoteAndRename: DEFAULT_AUTO_FOLDER_RENAME_SETTINGS,
 };
 
-export function normalizeSettings(data: Partial<MyPluginSettings> | LegacySettingsShape | null | undefined): MyPluginSettings {
-    const legacy = data as LegacySettingsShape | undefined;
-    const maybeNew = data as Partial<MyPluginSettings> | undefined;
-
-    const slashData = maybeNew?.slash ??
-        ((legacy?.enabled !== undefined || legacy?.triggerGroups !== undefined)
-            ? { enabled: legacy.enabled, triggerGroups: legacy.triggerGroups }
-            : undefined);
-
-    return {
-        slash: normalizeSlashSettings(slashData),
-        variableParser: normalizeVariableParserSettings(maybeNew?.variableParser ?? legacy?.variableParser),
-        templateCommand: normalizeTemplateCommandSettings(maybeNew?.templateCommand ?? legacy?.templateCommand),
-        magicWikilink: normalizeMagicWikilinkSettings(maybeNew?.magicWikilink ?? legacy?.magicWikilink),
-        codeExecutor: normalizeCodeExecutorSettings(maybeNew?.codeExecutor ?? legacy?.codeExecutor),
-        fileTreeColoring: normalizeFileTreeColorSettings(maybeNew?.fileTreeColoring ?? legacy?.fileTreeColoring),
-        //perNoteEncrypt: normalizePerNoteEncryptSettings(maybeNew?.perNoteEncrypt ?? undefined),
-        autoFolderNoteAndRename: normalizeautoFolderNoteAndRenameSettings(maybeNew?.autoFolderNoteAndRename ?? undefined)
-    };
-}
 
 export class WopSettingTab extends PluginSettingTab {
     plugin: MyPlugin;

@@ -6,6 +6,10 @@ interface SlashSuggestPluginApi {
     settings: {
         slash: SlashModuleSettings;
     };
+    registerEditorSuggest(
+        suggest: EditorSuggest<any>,
+    ): void;
+
 }
 
 export interface SlashCommandItem {
@@ -23,6 +27,10 @@ export class SlashCommandSuggest extends EditorSuggest<SlashCommandItem> {
     constructor(plugin: SlashSuggestPluginApi) {
         super(plugin.app);
         this.plugin = plugin;
+    }
+
+    register(): void {
+        this.plugin.registerEditorSuggest(this);
     }
 
     onTrigger(cursor: EditorPosition, editor: Editor, _view: unknown): EditorSuggestTriggerInfo | null {
