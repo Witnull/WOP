@@ -3,7 +3,7 @@
 WOP is a writing utility plugin that pack multiple essentials plugin that i think will help.
 
 - **Slash commands**: type a trigger like `/` or `>` and insert saved snippets
-- ** Variable parser**: auto-replace typed patterns like `->` with symbols like `→`
+- **Variable parser**: auto-replace typed patterns like `->` with symbols like `→`
 - **Template importer**: type a trigger like `!` and insert a template file by name
 - **File tree coloring**: paint folders and notes in the file explorer with configurable gradients
 - **Code Executor**: Allow to execute JS directly in note
