@@ -1,13 +1,19 @@
-# WOP for Obsidian
+# WOP: Witnull's Obsidian Plugin
 
-WOP is a writing utility plugin with three editor modules:
+WOP is a writing utility plugin that pack multiple essentials plugin that i think will help.
 
-- Slash commands: type a trigger like `/` or `>` and insert saved snippets
-- Variable parser: auto-replace typed patterns like `->` with symbols like `→`
-- Template importer: type a trigger like `!` and insert a template file by name
-- File tree coloring: paint folders and notes in the file explorer with configurable gradients
+- **Slash commands**: type a trigger like `/` or `>` and insert saved snippets
+- ** Variable parser**: auto-replace typed patterns like `->` with symbols like `→`
+- **Template importer**: type a trigger like `!` and insert a template file by name
+- **File tree coloring**: paint folders and notes in the file explorer with configurable gradients
+- **Code Executor**: Allow to execute JS directly in note
+- **Magic Wikilink**: Auto suggest related note when typing for reference
+- **Template commands**: similar to slash command but insert templates in `/templates` directly to note
+- **Auto Note Folder and Rename Image** : When image pasted/drag-n-drop, the current note will convert to Folder Note then rename the pasted image.
 
 ## Features
+
+![Demo](https://github.com/user-attachments/assets/11f75496-a6d7-4508-b200-3bfdf293561d)
 
 ### Slash commands
 
@@ -16,8 +22,6 @@ WOP is a writing utility plugin with three editor modules:
 - Search suggestions by command key and alias
 - Multiline command values
 - Built-in `{{date}}` token replacement to `YYYY-MM-DD`
-- Per-group JSON import/export
-- Load default commands from bundled `data.json`
 
 Example:
 
@@ -30,7 +34,6 @@ Example:
 - Replaces configured patterns while typing
 - Rules are sorted by pattern length so more specific rules match first
 - Enable or disable per rule
-- JSON import/export for rule sets
 
 Example defaults include:
 
@@ -46,69 +49,44 @@ Example defaults include:
 - Inserts full template content at cursor after selecting a suggestion
 - Warns in settings when the configured folder does not exist
 
-## Settings
+### File Tree Coloring
 
-Open:
+- Auto convert file tree color to more colorful, the color are configurable
+<p align="center">
+  <img src="assets/treeColoring.png" />
+</p>
 
-- **Settings -> Community plugins -> obsidian-wop -> Options**
+### Auto Note Folder and Rename Image
 
-The settings page has module tabs:
+- Auto convert current note (if not note folder yet) to note folder on image pasted and then rename the image as config.
 
-- `/ Slash commands`
-- `* Variable parser`
-- `! Templates importer`
-- `Tree colors`
+### Code Executor
 
-## JSON formats
+- Auto convert the JS code in note wrapped in defined code tag to render as a executable UI
+- More detail in settings page
 
-### Slash group import/export
-
-```json
-{
-  "hotKey": "/",
-  "commands": {
-    "h1": {
-      "command": "h1",
-      "alias": "Heading 1",
-      "value": "# "
-    }
-  }
-}
+Example:
+```javascript
+// @inputs: name=Guest, qty=1, note
+const total = Number(inputs.qty || '0') * 2;
+console.log('Name:', inputs.name);
+console.log('Note:', inputs.note || '(empty)');
+console.log('Total:', total);
 ```
 
-### Variable parser import/export
+<p align="center">
+  <img src="assets/codeex.png" />
+</p>
 
-```json
-{
-  "rules": [
-    { "pattern": "->", "replacement": "→" },
-    { "pattern": "!=", "replacement": "≠" }
-  ]
-}
-```
 
-### File tree color import/export
+### Magic wikilink 
 
-```json
-{
-  "enabled": true,
-  "folder": {
-    "backgroundStart": "#0f766e",
-    "backgroundEnd": "#14b8a6",
-    "textColor": "#f8fafc"
-  },
-  "note": {
-    "backgroundStart": "#1d4ed8",
-    "backgroundEnd": "#38bdf8",
-    "textColor": "#f8fafc"
-  },
-  "subNote": {
-    "backgroundStart": "#1d4ed8",
-    "backgroundEnd": "#38bdf8",
-    "textColors": ["#f8fafc", "#fde68a", "#fecaca", "#bbf7d0"]
-  }
-}
-```
+- Auto suggest the related page when typing for wikilink
+
+<p align="center">
+  <img src="assets/wikilink.png" />
+</p>
+
 
 ## Development
 
@@ -121,12 +99,6 @@ Install dependencies:
 
 ```bash
 npm install
-```
-
-Watch build:
-
-```bash
-npm run dev
 ```
 
 Production build:
@@ -143,10 +115,11 @@ Copy these files to your vault plugin folder:
 - `manifest.json`
 - `styles.css`
 
-Target folder:
+or simply copy `build` to the plugin folder `<Vault>/.obsidian/plugins/`
+or simpply edit `esbuild.config.mjs` to directly output `build` to the plugin folder
 
-```text
-<Vault>/.obsidian/plugins/obsidian-wop/
-```
+Then turn off and turn on the plugin in Obsidian for update.
 
-Then reload Obsidian and enable the plugin.
+## TODO:
+
+[ ] Encryption per note with AES
